@@ -37,6 +37,26 @@
             object-fit: cover;
             transform-origin: center center;
         }
+        .surprise-button {
+            position: absolute;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* 默认隐藏按钮 */
+            z-index: 1000; /* 确保按钮显示在最上层 */
+        }
+
+        /* 新增的样式用于定位按钮 */
+        .surprise-button.show {
+            display: block; /* 显示按钮 */
+            top: 66.67%; /* 竖直方向2/3处 */
+            left: 50%; /* 水平居中 */
+            transform: translate(-50%, -50%); /* 调整按钮位置使其真正居中 */
+        }
     </style>
 </head>
 <body>
@@ -209,10 +229,23 @@
         
         // 检查所有拼图块是否都在原始位置并且没有旋转
         // 如果完成则在控制台打印 "success"
+        // function checkCompletion() {
+        //     const isComplete = pieces.every((p, index) => p.originalIndex === index && p.currentRotation % 360 === 0);
+        //     if (isComplete) {
+        //         console.log('success');
+        //     }
+        // }
         function checkCompletion() {
             const isComplete = pieces.every((p, index) => p.originalIndex === index && p.currentRotation % 360 === 0);
             if (isComplete) {
                 console.log('success');
+                // 显示按钮
+                const surpriseButton = document.getElementById('surpriseButton');
+                surpriseButton.classList.add('show');
+                // 绑定按钮点击事件，用于跳转到新页面
+                surpriseButton.onclick = () => {
+                    window.location.href = 'happy_new_year.html'; // 替换为实际的目标页面路径
+                };
             }
         }
         
