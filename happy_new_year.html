@@ -10,12 +10,37 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #f08080;
             position: relative; /* Ensure the button can be positioned absolutely within this container */
+            background-image: url('test.gif'); /* 替换为你的 GIF 文件路径 */
+            background-size: cover; /* 根据需要调整背景大小 */
+            background-position: center; /* 背景居中 */
+            background-repeat: no-repeat; /* 防止背景重复 */
         }
-        canvas {
-            border: 3px solid red;
-            border-radius: 30px;
+
+        .canvas-container {
+            position: relative;
+            width: 540px; /* 包含边框的宽度 */
+            height: 540px; /* 包含边框的高度 */
+        }
+
+        .background-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .foreground-canvas {
+            position: absolute;
+            top: 70px; /* 边框宽度 */
+            left: 70px; /* 边框宽度 */
+            width: 400px; /* 不包含边框的宽度 */
+            height: 400px; /* 不包含边框的高度 */
+            background-color: white;
+            z-index: 2;
         }
 
         /* Button styles */
@@ -40,22 +65,28 @@
     </style>
 </head>
 <body>
-    <!-- canvas {
-        /* ?????? */
-        border-width: 30px; /* ???????????????? */
-
-        /* ?? border-image ???????? */
-        border-image-source: url('border.png'); /* ???????? */
-        border-image-slice: 30 fill; /* ???????????????????????? */
-        border-image-width: 30px; /* ??????????? */
-        border-image-repeat: round; /* ??????????????? round ????? */
-    }  -->
-    <canvas id="animationCanvas"></canvas>
+    <div class="canvas-container">
+        <canvas class="background-canvas" width="540" height="540"></canvas>
+        <canvas class="foreground-canvas" width="400" height="400"></canvas>
+    </div>
     <!-- Add a floating button -->
     <button class="floating-button" id="startButton">拆礼物啦~</button>
 
     <script>
-        const canvas = document.getElementById('animationCanvas');
+        // 绘制背景边框到大画布上
+        const backgroundCanvas = document.querySelector('.background-canvas');
+        const bgCtx = backgroundCanvas.getContext('2d');
+
+        const borderImage = new Image();
+        borderImage.src = 'border2.png'; // 替换为实际边框图片 URL
+
+        borderImage.onload = () => {
+            backgroundCanvas.width = 540;
+            backgroundCanvas.height = 540;
+            bgCtx.drawImage(borderImage, 0, 0, backgroundCanvas.width, backgroundCanvas.height);
+        };
+
+        const canvas = document.querySelector('.foreground-canvas');
         const ctx = canvas.getContext('2d');
 
         function img2px() {
@@ -157,18 +188,6 @@
                     requestAnimationFrame(reconstructText);
                 }
 
-                // Ensure the script runs after the DOM is fully loaded
-                // document.addEventListener('DOMContentLoaded', function() {
-                //     const startButton = document.getElementById('startButton');
-                //     console.log("startButton: ", startButton)
-                //     // Attach event listener to the button
-                //     startButton.addEventListener('click', () => {
-                //         // Hide the button
-                //         startButton.classList.add('hidden');
-                //         // Start animation (assuming reconstructText is defined elsewhere)
-                //         requestAnimationFrame(reconstructText);
-                //     });
-                // });
                 const startButton = document.getElementById('startButton');
                 console.log("startButton: ", startButton)
                 // Attach event listener to the button

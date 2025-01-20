@@ -13,13 +13,37 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f08080
+            background-color: #f08080;
+            background-image: url('test.gif'); /* 替换为你的 GIF 文件路径 */
+            background-size: cover; /* 根据需要调整背景大小 */
+            background-position: center; /* 背景居中 */
+            background-repeat: no-repeat; /* 防止背景重复 */
+        }
+        .canvas-container {
+            position: relative;
+            width: 540px; /* 包含边框的宽度 */
+            height: 540px; /* 包含边框的高度 */
+        }
+
+        .background-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
         /* 创建一个 4 列的网格布局，每列宽 100px，列间距为 5px */
         .puzzle-container {
+            position: absolute;
+            top: 70px; /* 边框宽度 */
+            left: 70px; /* 边框宽度 */
+            width: 400px; /* 不包含边框的宽度 */
+            height: 400px; /* 不包含边框的高度 */
             display: grid;
             grid-template-columns: repeat(4, 100px);
-            gap: 3px;
+            /* gap: 3px; */
+            z-index: 2;
         }
         /* 设置每个拼图块的大小、背景覆盖方式、鼠标悬停样式和相对定位 */
         .puzzle-piece {
@@ -29,6 +53,7 @@
             cursor: pointer;
             position: relative;
             transition: transform 0.6s ease-in-out;
+            z-index: 3;
         }
         /* 为拼图块内的图像设置类 */
         .puzzle-piece img {
@@ -36,6 +61,7 @@
             height: 100%;
             object-fit: cover;
             transform-origin: center center;
+            z-index: 4;
         }
 
         /* Button styles */
@@ -60,11 +86,27 @@
 </head>
 <body>
     <!-- 创建一个用于放置拼图块的容器 -->
-    <div class="puzzle-container"></div>
+    <div class="canvas-container">
+        <canvas class="background-canvas" width="540" height="540"></canvas>
+        <div class="puzzle-container"></div>
+    </div>
     <!-- Add a floating button -->
     <button class="floating-button hidden" id="surpriseButton">有惊喜哦~</button>
 
     <script>
+        // 绘制背景边框到大画布上
+        const backgroundCanvas = document.querySelector('.background-canvas');
+        const bgCtx = backgroundCanvas.getContext('2d');
+
+        const borderImage = new Image();
+        borderImage.src = 'border2.png'; // 替换为实际边框图片 URL
+
+        borderImage.onload = () => {
+            backgroundCanvas.width = 540;
+            backgroundCanvas.height = 540;
+            bgCtx.drawImage(borderImage, 0, 0, backgroundCanvas.width, backgroundCanvas.height);
+        };
+
         // 获取拼图容器元素
         const puzzleContainer = document.querySelector('.puzzle-container');
         // 存储所有拼图块的信息
