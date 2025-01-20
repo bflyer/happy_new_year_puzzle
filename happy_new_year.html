@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +10,31 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f08080;
+            background-color: #f0f0f0;
+            position: relative; /* Ensure the button can be positioned absolutely within this container */
         }
         canvas {
             border: 3px solid red;
             border-radius: 30px;
+        }
+
+        /* Button styles */
+        .floating-button {
+            position: absolute;
+            top: 47%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the button */
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #f00000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000; /* Make sure it's above other elements */
+        }
+        .floating-button.hidden {
+            display: none;
         }
         
     </style>
@@ -31,6 +51,8 @@
         border-image-repeat: round; /* ??????????????? round ????? */
     }  -->
     <canvas id="animationCanvas"></canvas>
+    <!-- Add a floating button -->
+    <button class="floating-button" id="startButton">拆礼物啦~</button>
 
     <script>
         const canvas = document.getElementById('animationCanvas');
@@ -93,8 +115,6 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 console.log('Clear canvas successfully');
 
-                console.log("textImg: ", textPixels)
-
                 let scatteredPixels = [];
 
                 for (let i = 0; i < pixels.length; i++) {
@@ -112,7 +132,7 @@
 
                 console.log('Reset scatteredPixels successfully');
 
-                // setTimeout(function() {console.log('Hello, world!');}, 3000); // �ӳ�3000���룬��3��
+                // setTimeout(function() {console.log('Hello, world!');}, 3000); // ÑÓ³Ù3000ºÁÃë£¬¼´3Ãë
                 function sleep(milliseconds) {
                     const start = Date.now();
                     while (Date.now() - start < milliseconds);
@@ -126,7 +146,7 @@
                 // Reconstruct
                 function reconstructText() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    console.log("scatteredPixels: ", scatteredPixels)
+
                     for (let i = 0; i < scatteredPixels.length && i < pixels.length; i++) {
                         scatteredPixels[i].x += (pixels[i].x - scatteredPixels[i].x) * 0.05; // Ease towards target
                         scatteredPixels[i].y += (pixels[i].y - scatteredPixels[i].y) * 0.05; // Ease towards target
@@ -137,8 +157,27 @@
                     requestAnimationFrame(reconstructText);
                 }
 
-                // Start animation
-                requestAnimationFrame(reconstructText);
+                // Ensure the script runs after the DOM is fully loaded
+                // document.addEventListener('DOMContentLoaded', function() {
+                //     const startButton = document.getElementById('startButton');
+                //     console.log("startButton: ", startButton)
+                //     // Attach event listener to the button
+                //     startButton.addEventListener('click', () => {
+                //         // Hide the button
+                //         startButton.classList.add('hidden');
+                //         // Start animation (assuming reconstructText is defined elsewhere)
+                //         requestAnimationFrame(reconstructText);
+                //     });
+                // });
+                const startButton = document.getElementById('startButton');
+                console.log("startButton: ", startButton)
+                // Attach event listener to the button
+                startButton.addEventListener('click', () => {
+                    // Hide the button
+                    startButton.classList.add('hidden');
+                    // Start animation (assuming reconstructText is defined elsewhere)
+                    requestAnimationFrame(reconstructText);
+                });
             };
         }
         img.onerror = () => {
