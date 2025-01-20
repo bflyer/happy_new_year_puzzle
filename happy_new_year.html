@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="animationCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('animationCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Load the image
+        const img = new Image();
+        img.src = '2.png'; // Replace with your image filename
+        img.onload = () => {
+            console.log('Image loaded successfully');
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Draw the image on the canvas
+            ctx.drawImage(img, 0, 0);
+
+            // Get pixel data
+            // const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = [];
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                if (imageData.data[i + 3] != 0) { // Check opacity
+                    pixels.push({
+                        x: (i / 4) % canvas.width,
+                        y: Math.floor((i / 4) / canvas.width),
+                        color: [
+                            imageData.data[i],
+                            imageData.data[i + 1],
+                            imageData.data[i + 2]
+                        ]
+                    });
+                }
+            }
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            console.log('Clear canvas successfully');
+
+            // Randomly scatter pixels
+            // let scatteredPixels = [...pixels];
+            // let scatteredPixels = JSON.parse(JSON.stringify(pixels));
+            // TODO
+            // let scatteredPixels = pixels.map(pixel => ({...pixel}));
+            // for (const pixel of scatteredPixels) {
+            //     pixel.x = Math.random() * canvas.width;
+            //     pixel.y = Math.random() * canvas.height;
+            // }
+            // // scatteredPixels2 = JSON.parse(JSON.stringify(scatteredPixels));
+            // scatteredPixels2 = scatteredPixels.map(pixel => ({...pixel}));
+
+            // // Function to draw text
+            // function drawText(text, x, y, fontSize) {
+            //     ctx.font = `${fontSize}px Microsoft YaHei`;
+            //     ctx.fillStyle = '#000';
+            //     ctx.fillText(text, x, y);
+            // }
+
+            // drawText("Happy", canvas.width / 3, canvas.height / 4, canvas.width / 5); // Adjust 
+            // drawText("New Year", canvas.width * 2 / 3, canvas.height / 4, canvas.width / 5); // Adjust position and size as needed
+
+            // Function to draw and center text horizontally on the canvas
+            function drawCenteredText(text, y, fontSize) {
+                ctx.font = `${fontSize}px Microsoft YaHei`;
+                ctx.fillStyle = '#000';
+                
+                // Measure the width of the text to be drawn
+                const textMetrics = ctx.measureText(text);
+                const textWidth = textMetrics.width;
+
+                // Calculate the x position for centered text
+                const x = (canvas.width - textWidth) / 2;
+
+                // Draw the text at the calculated position
+                ctx.fillText(text, x, y);
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Assuming 'canvas' is your HTMLCanvasElement and 'ctx' is its drawing context.
+            // Draw "Happy" and "New Year" centered on the canvas
+            drawCenteredText("Happy", canvas.height * 3 / 8, canvas.width / 5); // Adjust 
+            drawCenteredText("New Year", canvas.height * 5 / 8, canvas.width / 5); // Adjust Y position for second line
+
+            console.log('Draw text successfully');
+
+            // Get text pixel positions
+            const textImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const textPixels = [];
+            for (let i = 0; i < textImageData.data.length; i += 4) {
+                if (textImageData.data[i + 3] !== 0) { // Check non-transparent
+                    textPixels.push({
+                        x: (i / 4) % canvas.width,
+                        y: Math.floor((i / 4) / canvas.width)
+                    });
+                }
+            }
+
+            let scatteredPixels = [];
+
+            for (let i = 0; i < pixels.length; i++) {
+                mod_i = i % textPixels.length; 
+                scatteredPixels.push({
+                    x: textPixels[mod_i].x,
+                    y: textPixels[mod_i].y,
+                    color: [
+                        // imageData.data[i],
+                        // imageData.data[i + 1],
+                        // imageData.data[i + 2]
+                        pixels[i].color[0],
+                        pixels[i].color[1],
+                        pixels[i].color[2]
+                    ]
+                });
+            }
+
+            console.log('Reset scatteredPixels successfully');
+
+            // setTimeout(function() {console.log('Hello, world!');}, 3000); // 延迟3000毫秒，即3秒
+            function sleep(milliseconds) {
+                const start = Date.now();
+                while (Date.now() - start < milliseconds);
+            }
+
+            console.log('开始');
+            sleep(3000); // 阻塞当前线程3秒
+            console.log('3秒后打印');
+
+            // Reconstruct "新年快乐"
+            function reconstructText() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Map scattered pixels to text positions
+                // for (let i = 0; i < scatteredPixels.length && i < textPixels.length; i++) {
+                //     scatteredPixels[i].x += (textPixels[i].x - scatteredPixels[i].x) * 0.05; // Ease towards target
+                //     scatteredPixels[i].y += (textPixels[i].y - scatteredPixels[i].y) * 0.05; // Ease towards target
+                // }
+                // for (let i = 0; i < scatteredPixels.length && i < pixels.length; i++) {
+                //     scatteredPixels[i].x += (pixels[i].x - scatteredPixels[i].x) * 0.05; // Ease towards target
+                //     scatteredPixels[i].y += (pixels[i].y - scatteredPixels[i].y) * 0.05; // Ease towards target
+                // }
+                
+                // pixels：原始图像
+                // scatteredPixels2：随机散布的像素
+                // textPixels：文字像素
+                // scatteredPixels：散布到文字像素的像素
+
+                for (let i = 0; i < scatteredPixels.length && i < pixels.length; i++) {
+                    scatteredPixels[i].x += (pixels[i].x - scatteredPixels[i].x) * 0.05; // Ease towards target
+                    scatteredPixels[i].y += (pixels[i].y - scatteredPixels[i].y) * 0.05; // Ease towards target
+                    ctx.fillStyle = `rgb(${scatteredPixels[i].color.join(',')})`;
+                    ctx.fillRect(scatteredPixels[i].x, scatteredPixels[i].y, 1, 1);
+                }
+
+                // for (let i = 0; i < scatteredPixels.length; i++) {
+                //     mod_i = i % textPixels.length; 
+                //     scatteredPixels[i].x += (scatteredPixels2[mod_i].x - scatteredPixels[i].x) * 0.05; // Ease towards target
+                //     scatteredPixels[i].y += (scatteredPixels2[mod_i].y - scatteredPixels[i].y) * 0.05; // Ease towards target
+                // }
+
+
+                // Draw pixels
+                // for (const pixel of scatteredPixels) {
+                //     ctx.fillStyle = `rgb(${pixel.color.join(',')})`;
+                //     ctx.fillRect(pixel.x, pixel.y, 1, 1);
+                // }
+
+                requestAnimationFrame(reconstructText);
+            }
+
+            // Start animation
+            requestAnimationFrame(reconstructText);
+        };
+
+        img.onerror = () => {
+            console.error('Failed to load image');
+        };
+    </script>
+</body>
+</html>

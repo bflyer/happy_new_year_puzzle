@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 设置文档的字符编码为 UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 设置视口以适应不同设备的屏幕尺寸 -->
+    <style>
+        /* 设置整个页面居中显示，并设置背景颜色 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f08080
+        }
+        /* 创建一个 4 列的网格布局，每列宽 100px，列间距为 5px */
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 5px;
+        }
+        /* 设置每个拼图块的大小、背景覆盖方式、鼠标悬停样式和相对定位 */
+        .puzzle-piece {
+            width: 100px;
+            height: 100px;
+            background-size: cover;
+            cursor: pointer;
+            position: relative;
+        }
+        /* 为拼图块内的图像设置类 */
+        .puzzle-piece img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform-origin: center center;
+            transition: transform 0.6s ease-in-out;
+        }
+        /* 设置旋转图标的样式，包括位置、颜色、背景色、圆角和鼠标悬停样式 */
+        .rotate-icon {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            color: white;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            padding: 2px;
+            cursor: pointer;
+            z-index: 1;  /* 保证旋转图标在背景图片之上 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 创建一个用于放置拼图块的容器 -->
+    <div class="puzzle-container"></div>
+
+    <script>
+        // 获取拼图容器元素
+        const puzzleContainer = document.querySelector('.puzzle-container');
+        // 存储所有拼图块的信息
+        let pieces = [];
+        // 记录当前被拖动的拼图块
+        let draggedPiece = null;
+
+        // 定义一个函数来加载图片，并返回一个 Promise 对象，当图片加载完成后解决该 Promise
+        function loadImage() {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = 'wish.png';
+                img.onload = () => resolve(img);
+            });
+        }
+        
+
+        async function resizeImage(img) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 400;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, 400, 400);
+            const resizedImg = new Image();
+            resizedImg.src = canvas.toDataURL();
+            console.log("resize image successfully")
+            return resizedImg;
+        }
+        
+        async function splitImageIntoPieces(img, piecesCount = 16) {
+            // 调整图像大小到400x400像素
+            const resizedImg = await resizeImage(img);
+            
+            // 创建一个画布来绘制并切割图像
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 400;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(resizedImg, 0, 0);
+
+            // 计算每块的尺寸
+            const pieceSize = Math.sqrt(piecesCount);
+            const pieceWidth = canvas.width / pieceSize;
+            const pieceHeight = canvas.height / pieceSize;
+
+            // 存储分割后的图像
+            const pieces = [];
+
+            // 遍历所有的小块
+            for (let row = 0; row < pieceSize; row++) {
+                for (let col = 0; col < pieceSize; col++) {
+                    // 创建一个新的画布用于每个小块
+                    const pieceCanvas = document.createElement('canvas');
+                    pieceCanvas.width = pieceWidth;
+                    pieceCanvas.height = pieceHeight;
+                    const pieceCtx = pieceCanvas.getContext('2d');
+
+                    // 从大画布上剪切出对应的小块
+                    pieceCtx.drawImage(
+                        canvas,
+                        col * pieceWidth, row * pieceHeight, // 剪切的起点坐标
+                        pieceWidth, pieceHeight,             // 剪切的宽度和高度
+                        0, 0,                                 // 在新画布上的目标位置
+                        pieceWidth, pieceHeight              // 在新画布上的宽度和高度
+                    );
+
+                    // 将小块转换为Data URL并创建新的Image对象
+                    const pieceImg = new Image();
+                    pieceImg.src = pieceCanvas.toDataURL();
+
+                    // 将新的Image对象添加到pieces数组中
+                    pieces.push(pieceImg);
+                }
+            }
+
+            console.log("split image into pieces successfully");
+            return pieces;
+        }
+
+        async function createPuzzlePieces() {
+            // 异步调用 loadImage 函数并等待图片加载完成
+            const img = await loadImage();
+            // 异步调用 resizeImage 函数来缩放图片
+            const imgs = await splitImageIntoPieces(img);
+            // 计算每个拼图块的宽度和高度
+            const pieceWidth = imgs[0].width;
+            const pieceHeight = imgs[0].height;
+            
+            // 定义一个异步函数来创建拼图块
+            // 循环遍历 4x4 的网格，创建每个拼图块并设置其背景图片和位置
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    // // 创建了一个新的 <div> 元素，并将其赋值给变量 piece
+                    // // 这个 <div> 将代表拼图中的一个方块。
+                    // const piece = document.createElement('div');
+                    // // 这行代码将 CSS 类 puzzle-piece 添加到新创建的 <div> 元素中
+                    // // 这样做的目的是应用在 CSS 中定义的样式规则，
+                    // // 例如大小、背景覆盖方式、鼠标悬停样式和相对定位等。
+                    // piece.classList.add('puzzle-piece');
+                    // // 每个拼图块都会显示同一张大图的一部分
+                    // // piece.style.backgroundImage = `url(${resizedImg.src})`;
+                    // piece.style.backgroundImage = `url(${imgs[row * 4 + col].src})`;
+                    // // piece.style.backgroundPosition = `-${col * pieceWidth}px -${row * pieceHeight}px`;
+
+                    // // 添加旋转图标并绑定点击事件
+                    // const rotateIcon = document.createElement('span');
+                    // rotateIcon.innerHTML = '&#8635;';
+                    // rotateIcon.classList.add('rotate-icon');
+                    // rotateIcon.onclick = () => rotatePiece(piece);
+
+                    // piece.appendChild(rotateIcon);
+                    const piece = document.createElement('div');
+                    piece.classList.add('puzzle-piece');
+
+                    // 创建一个新的 <img> 元素用于展示拼图块的图像
+                    const img = new Image();
+                    img.src = imgs[row * 4 + col].src;
+                    piece.appendChild(img);
+
+                    // 添加旋转图标并绑定点击事件
+                    const rotateIcon = document.createElement('span');
+                    rotateIcon.innerHTML = '&#8635;';
+                    rotateIcon.classList.add('rotate-icon');
+                    rotateIcon.onclick = () => rotatePiece(piece);
+
+                    piece.appendChild(rotateIcon);
+
+                    // 启用拖放功能并绑定相应的事件监听器
+                    piece.draggable = true;
+                    piece.addEventListener('dragstart', dragStart);
+                    piece.addEventListener('dragover', dragOver);
+                    piece.addEventListener('drop', drop);
+
+                    // 设置初始随机旋转角度
+                    const randomRotation = Math.floor(Math.random() * 4) * 90;
+                    const piece_img = piece.querySelector('img'); // 获取拼图块中的 img 元素
+                    piece_img.style.transform = `rotate(${randomRotation}deg)`; // 只旋转 img 元素
+                    // 将每个拼图块的信息存储在数组中
+                    pieces.push({ element: piece, originalIndex: row * 4 + col, currentRotation: randomRotation });
+                    
+
+                    // 将拼图块添加到拼图容器中
+                    puzzleContainer.appendChild(piece);
+                }
+            }
+        }
+        
+        // 当开始拖动拼图块时，记录当前被拖动的拼图块
+        function dragStart(e) {
+            draggedPiece = e.target;
+        }
+        
+        // 允许目标区域接受拖动的拼图块
+        function dragOver(e) {
+            e.preventDefault();
+        }
+        
+        // 当拼图块被释放到另一个拼图块上时，交换两个拼图块的内容、样式和旋转信息
+        // 并检查拼图是否完成
+        function drop(e) {
+            if (e.target !== draggedPiece && e.target.classList.contains('puzzle-piece')) {
+                const tempContent = draggedPiece.innerHTML;
+                const tempStyle = draggedPiece.style.backgroundPosition;
+                const tempRotation = pieces.find(p => p.element === draggedPiece).currentRotation;
+
+                draggedPiece.innerHTML = e.target.innerHTML;
+                draggedPiece.style.backgroundPosition = e.target.style.backgroundPosition;
+                pieces.find(p => p.element === draggedPiece).currentRotation = pieces.find(p => p.element === e.target).currentRotation;
+
+                e.target.innerHTML = tempContent;
+                e.target.style.backgroundPosition = tempStyle;
+                pieces.find(p => p.element === e.target).currentRotation = tempRotation;
+
+                checkCompletion();
+            }
+        }
+        
+        // 当点击旋转图标时，增加拼图块的旋转角度，并应用变换
+        // 并检查拼图是否完成
+        function rotatePiece(piece) {
+            const pieceData = pieces.find(p => p.element === piece);
+            const img = piece.querySelector('img'); // 获取拼图块中的 img 元素
+            pieceData.currentRotation += 90;
+            img.style.transform = `rotate(${pieceData.currentRotation}deg)`; // 只旋转 img 元素
+            checkCompletion();
+        }
+        
+        // 检查所有拼图块是否都在原始位置并且没有旋转
+        // 如果完成则在控制台打印 "success"
+        function checkCompletion() {
+            const isComplete = pieces.every((p, index) => p.originalIndex === index && p.currentRotation % 360 === 0);
+            if (isComplete) {
+                console.log('success');
+            }
+        }
+        
+        // 调用 createPuzzlePieces 函数来初始化拼图游戏
+        createPuzzlePieces();
+    </script>
+</body>
+</html>
+
+
+
