@@ -71,7 +71,7 @@ git remote add origin <your-repo-url>
 - Go to your GitHub repository page and click on "Settings" at the top.
 - In the left sidebar, find the "Pages" tab.
 - In the "Source" section, select the branch (usually main or master) and folder path (default is the repository root /).
-- Click the "Save" button.
+- Click the "Save" button.  
 If everything is set up correctly, GitHub Pages will automatically deploy your static website.
 
 5. **Access Your Static Website**

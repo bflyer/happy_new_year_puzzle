@@ -70,7 +70,7 @@
         <canvas class="foreground-canvas" width="400" height="400"></canvas>
     </div>
     <!-- Add a floating button -->
-    <button class="floating-button" id="startButton">拆礼物啦~</button>
+    <button class="floating-button hidden" id="startButton">拆礼物啦~</button>
 
     <script>
         // 绘制背景边框到大画布上
@@ -78,7 +78,7 @@
         const bgCtx = backgroundCanvas.getContext('2d');
 
         const borderImage = new Image();
-        borderImage.src = 'border.png'; // 替换为实际边框图片 URL
+        borderImage.src = '../border.png'; // 替换为实际边框图片 URL
 
         borderImage.onload = () => {
             backgroundCanvas.width = 540;
@@ -189,14 +189,18 @@
                 }
 
                 const startButton = document.getElementById('startButton');
-                console.log("startButton: ", startButton)
-                // Attach event listener to the button
-                startButton.addEventListener('click', () => {
-                    // Hide the button
-                    startButton.classList.add('hidden');
-                    // Start animation (assuming reconstructText is defined elsewhere)
-                    requestAnimationFrame(reconstructText);
-                });
+                if (surpriseButton.classList.contains('hidden')) {
+                    surpriseButton.classList.remove('hidden');
+                    
+                    console.log("startButton: ", startButton)
+                    // Attach event listener to the button
+                    startButton.addEventListener('click', () => {
+                        // Hide the button
+                        startButton.classList.add('hidden');
+                        // Start animation (assuming reconstructText is defined elsewhere)
+                        requestAnimationFrame(reconstructText);
+                    });
+                }
             };
         }
         img.onerror = () => {
