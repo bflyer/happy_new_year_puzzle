@@ -4,7 +4,7 @@ A puzzle game to send New Year's greetings
 # Usage
 1. Clone the repository by 
    ```
-   git clone https://github.com/your_username/happy_new_year_puzzle.git
+   git clone git@github.com:bflyer/happy_new_year_puzzle.git
    ```
 
 2. enter the directory of the project, and run the below command in the terminal to start the game

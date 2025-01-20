@@ -19,7 +19,7 @@
         .puzzle-container {
             display: grid;
             grid-template-columns: repeat(4, 100px);
-            gap: 5px;
+            gap: 3px;
         }
         /* 设置每个拼图块的大小、背景覆盖方式、鼠标悬停样式和相对定位 */
         .puzzle-piece {
@@ -28,6 +28,7 @@
             background-size: cover;
             cursor: pointer;
             position: relative;
+            transition: transform 0.6s ease-in-out;
         }
         /* 为拼图块内的图像设置类 */
         .puzzle-piece img {
@@ -35,20 +36,6 @@
             height: 100%;
             object-fit: cover;
             transform-origin: center center;
-            transition: transform 0.6s ease-in-out;
-        }
-        /* 设置旋转图标的样式，包括位置、颜色、背景色、圆角和鼠标悬停样式 */
-        .rotate-icon {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            color: white;
-            font-size: 16px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            padding: 2px;
-            cursor: pointer;
-            z-index: 1;  /* 保证旋转图标在背景图片之上 */
         }
     </style>
 </head>
@@ -149,25 +136,6 @@
             // 循环遍历 4x4 的网格，创建每个拼图块并设置其背景图片和位置
             for (let row = 0; row < 4; row++) {
                 for (let col = 0; col < 4; col++) {
-                    // // 创建了一个新的 <div> 元素，并将其赋值给变量 piece
-                    // // 这个 <div> 将代表拼图中的一个方块。
-                    // const piece = document.createElement('div');
-                    // // 这行代码将 CSS 类 puzzle-piece 添加到新创建的 <div> 元素中
-                    // // 这样做的目的是应用在 CSS 中定义的样式规则，
-                    // // 例如大小、背景覆盖方式、鼠标悬停样式和相对定位等。
-                    // piece.classList.add('puzzle-piece');
-                    // // 每个拼图块都会显示同一张大图的一部分
-                    // // piece.style.backgroundImage = `url(${resizedImg.src})`;
-                    // piece.style.backgroundImage = `url(${imgs[row * 4 + col].src})`;
-                    // // piece.style.backgroundPosition = `-${col * pieceWidth}px -${row * pieceHeight}px`;
-
-                    // // 添加旋转图标并绑定点击事件
-                    // const rotateIcon = document.createElement('span');
-                    // rotateIcon.innerHTML = '&#8635;';
-                    // rotateIcon.classList.add('rotate-icon');
-                    // rotateIcon.onclick = () => rotatePiece(piece);
-
-                    // piece.appendChild(rotateIcon);
                     const piece = document.createElement('div');
                     piece.classList.add('puzzle-piece');
 
@@ -177,12 +145,7 @@
                     piece.appendChild(img);
 
                     // 添加旋转图标并绑定点击事件
-                    const rotateIcon = document.createElement('span');
-                    rotateIcon.innerHTML = '&#8635;';
-                    rotateIcon.classList.add('rotate-icon');
-                    rotateIcon.onclick = () => rotatePiece(piece);
-
-                    piece.appendChild(rotateIcon);
+                    piece.onclick = () => rotatePiece(piece);
 
                     // 启用拖放功能并绑定相应的事件监听器
                     piece.draggable = true;
