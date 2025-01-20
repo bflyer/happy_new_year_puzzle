@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- ÉèÖÃÎÄµµµÄ×Ö·û±àÂëÎª UTF-8 -->
+    <!-- è®¾ç½®æ–‡æ¡£çš„å­—ç¬¦ç¼–ç ä¸º UTF-8 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- ÉèÖÃÊÓ¿ÚÒÔÊÊÓ¦²»Í¬Éè±¸µÄÆÁÄ»³ß´ç -->
+    <!-- è®¾ç½®è§†å£ä»¥é€‚åº”ä¸åŒè®¾å¤‡çš„å±å¹•å°ºå¯¸ -->
     <style>
-        /* ÉèÖÃÕû¸öÒ³Ãæ¾ÓÖĞÏÔÊ¾£¬²¢ÉèÖÃ±³¾°ÑÕÉ« */
+        /* è®¾ç½®æ•´ä¸ªé¡µé¢å±…ä¸­æ˜¾ç¤ºï¼Œå¹¶è®¾ç½®èƒŒæ™¯é¢œè‰² */
         body {
             display: flex;
             justify-content: center;
@@ -15,13 +15,13 @@
             margin: 0;
             background-color: #f08080
         }
-        /* ´´½¨Ò»¸ö 4 ÁĞµÄÍø¸ñ²¼¾Ö£¬Ã¿ÁĞ¿í 100px£¬ÁĞ¼ä¾àÎª 5px */
+        /* åˆ›å»ºä¸€ä¸ª 4 åˆ—çš„ç½‘æ ¼å¸ƒå±€ï¼Œæ¯åˆ—å®½ 100pxï¼Œåˆ—é—´è·ä¸º 5px */
         .puzzle-container {
             display: grid;
             grid-template-columns: repeat(4, 100px);
             gap: 3px;
         }
-        /* ÉèÖÃÃ¿¸öÆ´Í¼¿éµÄ´óĞ¡¡¢±³¾°¸²¸Ç·½Ê½¡¢Êó±êĞüÍ£ÑùÊ½ºÍÏà¶Ô¶¨Î» */
+        /* è®¾ç½®æ¯ä¸ªæ‹¼å›¾å—çš„å¤§å°ã€èƒŒæ™¯è¦†ç›–æ–¹å¼ã€é¼ æ ‡æ‚¬åœæ ·å¼å’Œç›¸å¯¹å®šä½ */
         .puzzle-piece {
             width: 100px;
             height: 100px;
@@ -30,48 +30,49 @@
             position: relative;
             transition: transform 0.6s ease-in-out;
         }
-        /* ÎªÆ´Í¼¿éÄÚµÄÍ¼ÏñÉèÖÃÀà */
+        /* ä¸ºæ‹¼å›¾å—å†…çš„å›¾åƒè®¾ç½®ç±» */
         .puzzle-piece img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transform-origin: center center;
         }
-        .surprise-button {
+
+        /* Button styles */
+        .floating-button {
             position: absolute;
+            top: 47%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the button */
             padding: 10px 20px;
             font-size: 16px;
             color: white;
-            background-color: #4CAF50;
+            background-color: #f00000;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            display: none; /* Ä¬ÈÏÒş²Ø°´Å¥ */
-            z-index: 1000; /* È·±£°´Å¥ÏÔÊ¾ÔÚ×îÉÏ²ã */
+            z-index: 1000; /* Make sure it's above other elements */
         }
-
-        /* ĞÂÔöµÄÑùÊ½ÓÃÓÚ¶¨Î»°´Å¥ */
-        .surprise-button.show {
-            display: block; /* ÏÔÊ¾°´Å¥ */
-            top: 66.67%; /* ÊúÖ±·½Ïò2/3´¦ */
-            left: 50%; /* Ë®Æ½¾ÓÖĞ */
-            transform: translate(-50%, -50%); /* µ÷Õû°´Å¥Î»ÖÃÊ¹ÆäÕæÕı¾ÓÖĞ */
+        .floating-button.hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- ´´½¨Ò»¸öÓÃÓÚ·ÅÖÃÆ´Í¼¿éµÄÈİÆ÷ -->
+    <!-- åˆ›å»ºä¸€ä¸ªç”¨äºæ”¾ç½®æ‹¼å›¾å—çš„å®¹å™¨ -->
     <div class="puzzle-container"></div>
+    <!-- Add a floating button -->
+    <button class="floating-button hidden" id="surpriseButton">æœ‰æƒŠå–œå“¦~</button>
 
     <script>
-        // »ñÈ¡Æ´Í¼ÈİÆ÷ÔªËØ
+        // è·å–æ‹¼å›¾å®¹å™¨å…ƒç´ 
         const puzzleContainer = document.querySelector('.puzzle-container');
-        // ´æ´¢ËùÓĞÆ´Í¼¿éµÄĞÅÏ¢
+        // å­˜å‚¨æ‰€æœ‰æ‹¼å›¾å—çš„ä¿¡æ¯
         let pieces = [];
-        // ¼ÇÂ¼µ±Ç°±»ÍÏ¶¯µÄÆ´Í¼¿é
+        // è®°å½•å½“å‰è¢«æ‹–åŠ¨çš„æ‹¼å›¾å—
         let draggedPiece = null;
 
-        // ¶¨ÒåÒ»¸öº¯ÊıÀ´¼ÓÔØÍ¼Æ¬£¬²¢·µ»ØÒ»¸ö Promise ¶ÔÏó£¬µ±Í¼Æ¬¼ÓÔØÍê³Éºó½â¾ö¸Ã Promise
+        // å®šä¹‰ä¸€ä¸ªå‡½æ•°æ¥åŠ è½½å›¾ç‰‡ï¼Œå¹¶è¿”å›ä¸€ä¸ª Promise å¯¹è±¡ï¼Œå½“å›¾ç‰‡åŠ è½½å®Œæˆåè§£å†³è¯¥ Promise
         function loadImage() {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -94,47 +95,47 @@
         }
         
         async function splitImageIntoPieces(img, piecesCount = 16) {
-            // µ÷ÕûÍ¼Ïñ´óĞ¡µ½400x400ÏñËØ
+            // è°ƒæ•´å›¾åƒå¤§å°åˆ°400x400åƒç´ 
             const resizedImg = await resizeImage(img);
             
-            // ´´½¨Ò»¸ö»­²¼À´»æÖÆ²¢ÇĞ¸îÍ¼Ïñ
+            // åˆ›å»ºä¸€ä¸ªç”»å¸ƒæ¥ç»˜åˆ¶å¹¶åˆ‡å‰²å›¾åƒ
             const canvas = document.createElement('canvas');
             canvas.width = 400;
             canvas.height = 400;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(resizedImg, 0, 0);
 
-            // ¼ÆËãÃ¿¿éµÄ³ß´ç
+            // è®¡ç®—æ¯å—çš„å°ºå¯¸
             const pieceSize = Math.sqrt(piecesCount);
             const pieceWidth = canvas.width / pieceSize;
             const pieceHeight = canvas.height / pieceSize;
 
-            // ´æ´¢·Ö¸îºóµÄÍ¼Ïñ
+            // å­˜å‚¨åˆ†å‰²åçš„å›¾åƒ
             const pieces = [];
 
-            // ±éÀúËùÓĞµÄĞ¡¿é
+            // éå†æ‰€æœ‰çš„å°å—
             for (let row = 0; row < pieceSize; row++) {
                 for (let col = 0; col < pieceSize; col++) {
-                    // ´´½¨Ò»¸öĞÂµÄ»­²¼ÓÃÓÚÃ¿¸öĞ¡¿é
+                    // åˆ›å»ºä¸€ä¸ªæ–°çš„ç”»å¸ƒç”¨äºæ¯ä¸ªå°å—
                     const pieceCanvas = document.createElement('canvas');
                     pieceCanvas.width = pieceWidth;
                     pieceCanvas.height = pieceHeight;
                     const pieceCtx = pieceCanvas.getContext('2d');
 
-                    // ´Ó´ó»­²¼ÉÏ¼ôÇĞ³ö¶ÔÓ¦µÄĞ¡¿é
+                    // ä»å¤§ç”»å¸ƒä¸Šå‰ªåˆ‡å‡ºå¯¹åº”çš„å°å—
                     pieceCtx.drawImage(
                         canvas,
-                        col * pieceWidth, row * pieceHeight, // ¼ôÇĞµÄÆğµã×ø±ê
-                        pieceWidth, pieceHeight,             // ¼ôÇĞµÄ¿í¶ÈºÍ¸ß¶È
-                        0, 0,                                 // ÔÚĞÂ»­²¼ÉÏµÄÄ¿±êÎ»ÖÃ
-                        pieceWidth, pieceHeight              // ÔÚĞÂ»­²¼ÉÏµÄ¿í¶ÈºÍ¸ß¶È
+                        col * pieceWidth, row * pieceHeight, // å‰ªåˆ‡çš„èµ·ç‚¹åæ ‡
+                        pieceWidth, pieceHeight,             // å‰ªåˆ‡çš„å®½åº¦å’Œé«˜åº¦
+                        0, 0,                                 // åœ¨æ–°ç”»å¸ƒä¸Šçš„ç›®æ ‡ä½ç½®
+                        pieceWidth, pieceHeight              // åœ¨æ–°ç”»å¸ƒä¸Šçš„å®½åº¦å’Œé«˜åº¦
                     );
 
-                    // ½«Ğ¡¿é×ª»»ÎªData URL²¢´´½¨ĞÂµÄImage¶ÔÏó
+                    // å°†å°å—è½¬æ¢ä¸ºData URLå¹¶åˆ›å»ºæ–°çš„Imageå¯¹è±¡
                     const pieceImg = new Image();
                     pieceImg.src = pieceCanvas.toDataURL();
 
-                    // ½«ĞÂµÄImage¶ÔÏóÌí¼Óµ½piecesÊı×éÖĞ
+                    // å°†æ–°çš„Imageå¯¹è±¡æ·»åŠ åˆ°piecesæ•°ç»„ä¸­
                     pieces.push(pieceImg);
                 }
             }
@@ -144,61 +145,61 @@
         }
 
         async function createPuzzlePieces() {
-            // Òì²½µ÷ÓÃ loadImage º¯Êı²¢µÈ´ıÍ¼Æ¬¼ÓÔØÍê³É
+            // å¼‚æ­¥è°ƒç”¨ loadImage å‡½æ•°å¹¶ç­‰å¾…å›¾ç‰‡åŠ è½½å®Œæˆ
             const img = await loadImage();
-            // Òì²½µ÷ÓÃ resizeImage º¯ÊıÀ´Ëõ·ÅÍ¼Æ¬
+            // å¼‚æ­¥è°ƒç”¨ resizeImage å‡½æ•°æ¥ç¼©æ”¾å›¾ç‰‡
             const imgs = await splitImageIntoPieces(img);
-            // ¼ÆËãÃ¿¸öÆ´Í¼¿éµÄ¿í¶ÈºÍ¸ß¶È
+            // è®¡ç®—æ¯ä¸ªæ‹¼å›¾å—çš„å®½åº¦å’Œé«˜åº¦
             const pieceWidth = imgs[0].width;
             const pieceHeight = imgs[0].height;
             
-            // ¶¨ÒåÒ»¸öÒì²½º¯ÊıÀ´´´½¨Æ´Í¼¿é
-            // Ñ­»·±éÀú 4x4 µÄÍø¸ñ£¬´´½¨Ã¿¸öÆ´Í¼¿é²¢ÉèÖÃÆä±³¾°Í¼Æ¬ºÍÎ»ÖÃ
+            // å®šä¹‰ä¸€ä¸ªå¼‚æ­¥å‡½æ•°æ¥åˆ›å»ºæ‹¼å›¾å—
+            // å¾ªç¯éå† 4x4 çš„ç½‘æ ¼ï¼Œåˆ›å»ºæ¯ä¸ªæ‹¼å›¾å—å¹¶è®¾ç½®å…¶èƒŒæ™¯å›¾ç‰‡å’Œä½ç½®
             for (let row = 0; row < 4; row++) {
                 for (let col = 0; col < 4; col++) {
                     const piece = document.createElement('div');
                     piece.classList.add('puzzle-piece');
 
-                    // ´´½¨Ò»¸öĞÂµÄ <img> ÔªËØÓÃÓÚÕ¹Ê¾Æ´Í¼¿éµÄÍ¼Ïñ
+                    // åˆ›å»ºä¸€ä¸ªæ–°çš„ <img> å…ƒç´ ç”¨äºå±•ç¤ºæ‹¼å›¾å—çš„å›¾åƒ
                     const img = new Image();
                     img.src = imgs[row * 4 + col].src;
                     piece.appendChild(img);
 
-                    // Ìí¼ÓĞı×ªÍ¼±ê²¢°ó¶¨µã»÷ÊÂ¼ş
+                    // æ·»åŠ æ—‹è½¬å›¾æ ‡å¹¶ç»‘å®šç‚¹å‡»äº‹ä»¶
                     piece.onclick = () => rotatePiece(piece);
 
-                    // ÆôÓÃÍÏ·Å¹¦ÄÜ²¢°ó¶¨ÏàÓ¦µÄÊÂ¼ş¼àÌıÆ÷
+                    // å¯ç”¨æ‹–æ”¾åŠŸèƒ½å¹¶ç»‘å®šç›¸åº”çš„äº‹ä»¶ç›‘å¬å™¨
                     piece.draggable = true;
                     piece.addEventListener('dragstart', dragStart);
                     piece.addEventListener('dragover', dragOver);
                     piece.addEventListener('drop', drop);
 
-                    // ÉèÖÃ³õÊ¼Ëæ»úĞı×ª½Ç¶È
+                    // è®¾ç½®åˆå§‹éšæœºæ—‹è½¬è§’åº¦
                     const randomRotation = Math.floor(Math.random() * 4) * 90;
-                    const piece_img = piece.querySelector('img'); // »ñÈ¡Æ´Í¼¿éÖĞµÄ img ÔªËØ
-                    piece_img.style.transform = `rotate(${randomRotation}deg)`; // Ö»Ğı×ª img ÔªËØ
-                    // ½«Ã¿¸öÆ´Í¼¿éµÄĞÅÏ¢´æ´¢ÔÚÊı×éÖĞ
+                    const piece_img = piece.querySelector('img'); // è·å–æ‹¼å›¾å—ä¸­çš„ img å…ƒç´ 
+                    piece_img.style.transform = `rotate(${randomRotation}deg)`; // åªæ—‹è½¬ img å…ƒç´ 
+                    // å°†æ¯ä¸ªæ‹¼å›¾å—çš„ä¿¡æ¯å­˜å‚¨åœ¨æ•°ç»„ä¸­
                     pieces.push({ element: piece, originalIndex: row * 4 + col, currentRotation: randomRotation });
                     
 
-                    // ½«Æ´Í¼¿éÌí¼Óµ½Æ´Í¼ÈİÆ÷ÖĞ
+                    // å°†æ‹¼å›¾å—æ·»åŠ åˆ°æ‹¼å›¾å®¹å™¨ä¸­
                     puzzleContainer.appendChild(piece);
                 }
             }
         }
         
-        // µ±¿ªÊ¼ÍÏ¶¯Æ´Í¼¿éÊ±£¬¼ÇÂ¼µ±Ç°±»ÍÏ¶¯µÄÆ´Í¼¿é
+        // å½“å¼€å§‹æ‹–åŠ¨æ‹¼å›¾å—æ—¶ï¼Œè®°å½•å½“å‰è¢«æ‹–åŠ¨çš„æ‹¼å›¾å—
         function dragStart(e) {
             draggedPiece = e.target;
         }
         
-        // ÔÊĞíÄ¿±êÇøÓò½ÓÊÜÍÏ¶¯µÄÆ´Í¼¿é
+        // å…è®¸ç›®æ ‡åŒºåŸŸæ¥å—æ‹–åŠ¨çš„æ‹¼å›¾å—
         function dragOver(e) {
             e.preventDefault();
         }
         
-        // µ±Æ´Í¼¿é±»ÊÍ·Åµ½ÁíÒ»¸öÆ´Í¼¿éÉÏÊ±£¬½»»»Á½¸öÆ´Í¼¿éµÄÄÚÈİ¡¢ÑùÊ½ºÍĞı×ªĞÅÏ¢
-        // ²¢¼ì²éÆ´Í¼ÊÇ·ñÍê³É
+        // å½“æ‹¼å›¾å—è¢«é‡Šæ”¾åˆ°å¦ä¸€ä¸ªæ‹¼å›¾å—ä¸Šæ—¶ï¼Œäº¤æ¢ä¸¤ä¸ªæ‹¼å›¾å—çš„å†…å®¹ã€æ ·å¼å’Œæ—‹è½¬ä¿¡æ¯
+        // å¹¶æ£€æŸ¥æ‹¼å›¾æ˜¯å¦å®Œæˆ
         function drop(e) {
             if (e.target !== draggedPiece && e.target.classList.contains('puzzle-piece')) {
                 const tempContent = draggedPiece.innerHTML;
@@ -217,39 +218,36 @@
             }
         }
         
-        // µ±µã»÷Ğı×ªÍ¼±êÊ±£¬Ôö¼ÓÆ´Í¼¿éµÄĞı×ª½Ç¶È£¬²¢Ó¦ÓÃ±ä»»
-        // ²¢¼ì²éÆ´Í¼ÊÇ·ñÍê³É
+        // å½“ç‚¹å‡»æ—‹è½¬å›¾æ ‡æ—¶ï¼Œå¢åŠ æ‹¼å›¾å—çš„æ—‹è½¬è§’åº¦ï¼Œå¹¶åº”ç”¨å˜æ¢
+        // å¹¶æ£€æŸ¥æ‹¼å›¾æ˜¯å¦å®Œæˆ
         function rotatePiece(piece) {
             const pieceData = pieces.find(p => p.element === piece);
-            const img = piece.querySelector('img'); // »ñÈ¡Æ´Í¼¿éÖĞµÄ img ÔªËØ
+            const img = piece.querySelector('img'); // è·å–æ‹¼å›¾å—ä¸­çš„ img å…ƒç´ 
             pieceData.currentRotation += 90;
-            img.style.transform = `rotate(${pieceData.currentRotation}deg)`; // Ö»Ğı×ª img ÔªËØ
+            img.style.transform = `rotate(${pieceData.currentRotation}deg)`; // åªæ—‹è½¬ img å…ƒç´ 
             checkCompletion();
         }
         
-        // ¼ì²éËùÓĞÆ´Í¼¿éÊÇ·ñ¶¼ÔÚÔ­Ê¼Î»ÖÃ²¢ÇÒÃ»ÓĞĞı×ª
-        // Èç¹ûÍê³ÉÔòÔÚ¿ØÖÆÌ¨´òÓ¡ "success"
-        // function checkCompletion() {
-        //     const isComplete = pieces.every((p, index) => p.originalIndex === index && p.currentRotation % 360 === 0);
-        //     if (isComplete) {
-        //         console.log('success');
-        //     }
-        // }
         function checkCompletion() {
             const isComplete = pieces.every((p, index) => p.originalIndex === index && p.currentRotation % 360 === 0);
             if (isComplete) {
                 console.log('success');
-                // ÏÔÊ¾°´Å¥
+                // æ˜¾ç¤ºæŒ‰é’®
                 const surpriseButton = document.getElementById('surpriseButton');
-                surpriseButton.classList.add('show');
-                // °ó¶¨°´Å¥µã»÷ÊÂ¼ş£¬ÓÃÓÚÌø×ªµ½ĞÂÒ³Ãæ
-                surpriseButton.onclick = () => {
-                    window.location.href = 'happy_new_year.html'; // Ìæ»»ÎªÊµ¼ÊµÄÄ¿±êÒ³ÃæÂ·¾¶
-                };
+                if (surpriseButton.classList.contains('hidden')) {
+                    surpriseButton.classList.remove('hidden');
+
+                    // ç»‘å®šç‚¹å‡»äº‹ä»¶ï¼ˆä»…éœ€ä¸€æ¬¡ï¼‰
+                    surpriseButton.addEventListener('click', () => {
+                        // Hide the button
+                        surpriseButton.classList.add('hidden');
+                        window.location.href = 'happy_new_year.html'; // æ›¿æ¢ä¸ºå®é™…çš„ç›®æ ‡é¡µé¢è·¯å¾„
+                    });
+                }
             }
         }
         
-        // µ÷ÓÃ createPuzzlePieces º¯ÊıÀ´³õÊ¼»¯Æ´Í¼ÓÎÏ·
+        // è°ƒç”¨ createPuzzlePieces å‡½æ•°æ¥åˆå§‹åŒ–æ‹¼å›¾æ¸¸æˆ
         createPuzzlePieces();
     </script>
 </body>
