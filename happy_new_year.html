@@ -12,7 +12,7 @@
             margin: 0;
             background-color: #f08080;
             position: relative; /* Ensure the button can be positioned absolutely within this container */
-            background-image: url('test.gif'); /* 替换为你的 GIF 文件路径 */
+            background-image: url('background.gif'); /* 替换为你的 GIF 文件路径 */
             background-size: cover; /* 根据需要调整背景大小 */
             background-position: center; /* 背景居中 */
             background-repeat: no-repeat; /* 防止背景重复 */
@@ -78,7 +78,7 @@
         const bgCtx = backgroundCanvas.getContext('2d');
 
         const borderImage = new Image();
-        borderImage.src = 'border2.png'; // 替换为实际边框图片 URL
+        borderImage.src = 'border.png'; // 替换为实际边框图片 URL
 
         borderImage.onload = () => {
             backgroundCanvas.width = 540;
@@ -110,7 +110,7 @@
 
         // Load the image
         const img = new Image();
-        img.src = '3.png'; // Replace with your image filename
+        img.src = 'myself.png'; // Replace with your image filename
         img.onload = () => {
             console.log('Image loaded successfully');
             canvas.width = img.width;
