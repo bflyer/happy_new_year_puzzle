@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新年快乐~蛇年大吉！来看看惊喜吧^-^</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f08080;
+            position: relative; /* Ensure the button can be positioned absolutely within this container */
+            background-image: url('../background.gif'); /* 替换为你的 GIF 文件路径 */
+            background-size: cover; /* 根据需要调整背景大小 */
+            background-position: center; /* 背景居中 */
+            background-repeat: no-repeat; /* 防止背景重复 */
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 540px; /* 包含边框的宽度 */
+            height: 540px; /* 包含边框的高度 */
+        }
+
+        .background-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .foreground-canvas {
+            position: absolute;
+            top: 70px; /* 边框宽度 */
+            left: 70px; /* 边框宽度 */
+            width: 400px; /* 不包含边框的宽度 */
+            height: 400px; /* 不包含边框的高度 */
+            background-color: white;
+            z-index: 2;
+        }
+
+        /* Button styles */
+        .floating-button {
+            position: absolute;
+            top: 47%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the button */
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #f00000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000; /* Make sure it's above other elements */
+        }
+        .floating-button.hidden {
+            display: none;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="canvas-container">
+        <canvas class="background-canvas" width="540" height="540"></canvas>
+        <canvas class="foreground-canvas" width="400" height="400"></canvas>
+    </div>
+    <!-- Add a floating button -->
+    <button class="floating-button hidden" id="startButton">拆礼物啦~</button>
+
+    <script>
+        // 绘制背景边框到大画布上
+        const backgroundCanvas = document.querySelector('.background-canvas');
+        const bgCtx = backgroundCanvas.getContext('2d');
+
+        const borderImage = new Image();
+        borderImage.src = '../border.png'; // 替换为实际边框图片 URL
+
+        borderImage.onload = () => {
+            backgroundCanvas.width = 540;
+            backgroundCanvas.height = 540;
+            bgCtx.drawImage(borderImage, 0, 0, backgroundCanvas.width, backgroundCanvas.height);
+        };
+
+        const canvas = document.querySelector('.foreground-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function img2px() {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = [];
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                if (imageData.data[i + 3] != 0) { // Check opacity
+                    pixels.push({
+                        x: (i / 4) % canvas.width,
+                        y: Math.floor((i / 4) / canvas.width),
+                        color: [
+                            imageData.data[i],
+                            imageData.data[i + 1],
+                            imageData.data[i + 2]
+                        ]
+                    });
+                }
+            }
+            return pixels;
+        }
+
+        // Load the image
+        const img = new Image();
+        img.src = 'photo.png'; // Replace with your image filename
+        img.onload = () => {
+            console.log('Image loaded successfully');
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Draw the image on the canvas
+            ctx.drawImage(img, 0, 0);
+
+            // Get pixel data
+            // const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = img2px();
+            console.log('Get pixel data successfully');
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            console.log('Clear canvas successfully');
+
+            // Create Text Image
+            const textImg = new Image();
+            textImg.src = '../wish.png'; // Replace with your image filename
+            textImg.onload = () => {
+                console.log('Text image loaded successfully');
+                canvas.width = textImg.width;
+                canvas.height = textImg.height;
+
+                // Draw the image on the canvas
+                ctx.drawImage(textImg, 0, 0);
+
+                const textPixels = img2px();
+                console.log('Get text pixel data successfully');
+
+                // Clear the canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                console.log('Clear canvas successfully');
+
+                let scatteredPixels = [];
+
+                for (let i = 0; i < pixels.length; i++) {
+                    mod_i = i % textPixels.length; 
+                    scatteredPixels.push({
+                        x: textPixels[mod_i].x,
+                        y: textPixels[mod_i].y,
+                        color: [
+                            pixels[i].color[0],
+                            pixels[i].color[1],
+                            pixels[i].color[2]
+                        ]
+                    });
+                }
+
+                console.log('Reset scatteredPixels successfully');
+
+                // setTimeout(function() {console.log('Hello, world!');}, 3000); // ÑÓ³Ù3000ºÁÃë£¬¼´3Ãë
+                function sleep(milliseconds) {
+                    const start = Date.now();
+                    while (Date.now() - start < milliseconds);
+                }
+
+                for (let i = 0; i < scatteredPixels.length && i < pixels.length; i++) {
+                    ctx.fillStyle = `rgb(${scatteredPixels[i].color.join(',')})`;
+                    ctx.fillRect(scatteredPixels[i].x, scatteredPixels[i].y, 1, 1);
+                }
+
+                // Reconstruct
+                function reconstructText() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    for (let i = 0; i < scatteredPixels.length && i < pixels.length; i++) {
+                        scatteredPixels[i].x += (pixels[i].x - scatteredPixels[i].x) * 0.05; // Ease towards target
+                        scatteredPixels[i].y += (pixels[i].y - scatteredPixels[i].y) * 0.05; // Ease towards target
+                        ctx.fillStyle = `rgb(${scatteredPixels[i].color.join(',')})`;
+                        ctx.fillRect(scatteredPixels[i].x, scatteredPixels[i].y, 1, 1);
+                    }
+
+                    requestAnimationFrame(reconstructText);
+                }
+
+                const startButton = document.getElementById('startButton');
+                if (startButton.classList.contains('hidden')) {
+                    startButton.classList.remove('hidden');
+                    
+                    console.log("startButton: ", startButton)
+                    // Attach event listener to the button
+                    startButton.addEventListener('click', () => {
+                        // Hide the button
+                        startButton.classList.add('hidden');
+                        // Start animation (assuming reconstructText is defined elsewhere)
+                        requestAnimationFrame(reconstructText);
+                    });
+                }
+            };
+        }
+        img.onerror = () => {
+            console.error('Failed to load image');
+        };
+    </script>
+</body>
+</html>
