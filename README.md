@@ -94,3 +94,9 @@ If everything is set up correctly, GitHub Pages will automatically deploy your s
 - If your project uses other static site generators (such as Hugo, VuePress, etc.), you need to generate the static files locally first and then upload them to the GitHub repository.
 
 By following these steps, you can easily host a static website on GitHub!
+
+## Embed resources into html by base64 encoding
+You can also embed resources into html by base64 encoding them, and merge the two html files into one. Just replace the path of your resources with the base64 encoded content. 
+
+An example is template.html.
+
