@@ -186,7 +186,7 @@
 
         createPuzzlePieces();
 
-        async function loadImage() {
+        function loadImage() {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.src = 'wish.png';
@@ -194,7 +194,7 @@
             });
         }
 
-        async function resizeImage(img, width, height) {
+        function resizeImage(img, width, height) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = width;
@@ -205,12 +205,12 @@
             return resizedImg;
         }
 
-        async function splitImageIntoPieces(img, piecesCount = 16) {
+        function splitImageIntoPieces(img, piecesCount = 16) {
             const puzzleContainer = document.querySelector('.puzzle-container');
             const containerWidth = puzzleContainer.clientWidth;
             const containerHeight = puzzleContainer.clientHeight;
 
-            const canvas = await resizeImage(img, containerWidth, containerHeight);
+            const canvas = resizeImage(img, containerWidth, containerHeight);
 
             const pieceSize = Math.sqrt(piecesCount);
             if (!Number.isInteger(pieceSize)) {
@@ -432,8 +432,8 @@
                 page.classList.remove('active');
             });
             document.getElementById(pageId).classList.add('active');
-            if (backgroundCanvasId)
-                drawBorder(backgroundCanvasId);
+            // if (backgroundCanvasId)
+            //     drawBorder(backgroundCanvasId);
         }
 
         // 初始化按钮逻辑
