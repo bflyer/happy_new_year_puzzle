@@ -179,7 +179,7 @@
         }
 
         // 拼图页面逻辑
-        drawBorder('puzzleBackgroundCanvas');
+        // drawBorder('puzzleBackgroundCanvas');
         const puzzleContainer = document.querySelector('.puzzle-container');
         let pieces = [];
         let draggedPiece = null;
@@ -286,7 +286,7 @@
                 if (surpriseButton.classList.contains('hidden')) {
                     surpriseButton.classList.remove('hidden');
                     surpriseButton.addEventListener('click', () => {
-                        showPage('animationPage');
+                        showPage('animationPage', 'animationBackgroundCanvas');
                         console.log("Successfully show animation page");
                         // createAnimation();
                         surpriseButton.classList.add('hidden');
@@ -319,7 +319,7 @@
 
         // 动画页面逻辑
         async function createAnimation() {
-            drawBorder('animationBackgroundCanvas');
+            // drawBorder('animationBackgroundCanvas');
             const img = new Image();
             if (userImage)
                 console.log("I have a user image");
@@ -400,8 +400,8 @@
                 page.classList.remove('active');
             });
             document.getElementById(pageId).classList.add('active');
-            // if (backgroundCanvasId)
-            //     drawBorder(backgroundCanvasId);
+            if (backgroundCanvasId)
+                drawBorder(backgroundCanvasId);
         }
 
         // 初始化按钮逻辑
@@ -423,7 +423,7 @@
                             canvas.height = 400;
                             ctx.drawImage(img, 0, 0, 400, 400);
                             userImage = canvas.toDataURL();
-                            showPage('puzzlePage');
+                            showPage('puzzlePage', 'puzzleBackgroundCanvas');
                             createPuzzlePieces();
                             createAnimation();
                         };
@@ -435,7 +435,7 @@
         });
 
         document.getElementById('startDirectlyButton').addEventListener('click', () => {
-            showPage('puzzlePage');
+            showPage('puzzlePage', 'puzzleBackgroundCanvas');
             createPuzzlePieces();
             createAnimation();
         });
