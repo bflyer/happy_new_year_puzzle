@@ -4,8 +4,9 @@ A puzzle game to send New Year's greetings
 Type in `https://bflyer.github.io/happy_new_year_puzzle/happy_new_year_puzzle.html` in your browser to play the game.
 
 **How to play?**
+- Opening it with a computer browser is suggested.  
 - **直接开始**：If you choose this button, you will be redirected to the game page directly, and get my surprise after finishing the puzzle and the new button is pressed.  
-- **上传图片**：If you choose this button, you can upload your own image to replace the default one. Also, you will get a surprise after finishing the puzzle and the new button is pressed.  
+- **上传图片**：If you choose this button, you can upload your own 1:1 ratio image to replace the default one. Also, you will get a surprise after finishing the puzzle and the new button is pressed.  
 
 ## Local Development Guide
 1. Clone the repository by 
