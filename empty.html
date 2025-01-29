@@ -184,6 +184,8 @@
         let pieces = [];
         let draggedPiece = null;
 
+        createPuzzlePieces();
+
         async function loadImage() {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -424,7 +426,6 @@
                             ctx.drawImage(img, 0, 0, 400, 400);
                             userImage = canvas.toDataURL();
                             showPage('puzzlePage');
-                            createPuzzlePieces();
                             createAnimation();
                         };
                     };
@@ -436,7 +437,6 @@
 
         document.getElementById('startDirectlyButton').addEventListener('click', () => {
             showPage('puzzlePage');
-            createPuzzlePieces();
             createAnimation();
         });
     </script>
