@@ -283,6 +283,7 @@
                     surpriseButton.classList.remove('hidden');
                     surpriseButton.addEventListener('click', () => {
                         showPage('animationPage', 'animationBackgroundCanvas');
+                        createAnimation();
                         surpriseButton.classList.add('hidden');
                     });
                 }
@@ -290,93 +291,96 @@
         }
 
         // 动画页面逻辑
-        const canvas = document.querySelector('.foreground-canvas');
-        const ctx = canvas.getContext('2d');
+        function createAnimation() {
+            const canvas = document.querySelector('.foreground-canvas');
+            const ctx = canvas.getContext('2d');
 
-        function img2px() {
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const pixels = [];
-            for (let i = 0; i < imageData.data.length; i += 4) {
-                if (imageData.data[i + 3] != 0) {
-                    pixels.push({
-                        x: (i / 4) % canvas.width,
-                        y: Math.floor((i / 4) / canvas.width),
-                        color: [
-                            imageData.data[i],
-                            imageData.data[i + 1],
-                            imageData.data[i + 2]
-                        ]
-                    });
+            function img2px() {
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = [];
+                for (let i = 0; i < imageData.data.length; i += 4) {
+                    if (imageData.data[i + 3] != 0) {
+                        pixels.push({
+                            x: (i / 4) % canvas.width,
+                            y: Math.floor((i / 4) / canvas.width),
+                            color: [
+                                imageData.data[i],
+                                imageData.data[i + 1],
+                                imageData.data[i + 2]
+                            ]
+                        });
+                    }
                 }
+                return pixels;
             }
-            return pixels;
-        }
 
-        const img = new Image();
-        if (userImage)
-            console.log("I have a user image");
-        img.src = userImage ? userImage : 'photo.png';
+            const img = new Image();
+            if (userImage)
+                console.log("I have a user image");
+            img.src = userImage ? userImage : 'photo.png';
 
-        img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
 
-            const pixels = img2px();
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const textImg = new Image();
-            textImg.src = 'wish.png';
-            textImg.onload = () => {
-                canvas.width = textImg.width;
-                canvas.height = textImg.height;
-                ctx.drawImage(textImg, 0, 0);
-
-                const textPixels = img2px();
+                const pixels = img2px();
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                let scatteredPixels = [];
+                const textImg = new Image();
+                textImg.src = 'wish.png';
+                textImg.onload = () => {
+                    canvas.width = textImg.width;
+                    canvas.height = textImg.height;
+                    ctx.drawImage(textImg, 0, 0);
 
-                for (let i = 0; i < pixels.length; i++) {
-                    mod_i = i % textPixels.length;
-                    scatteredPixels.push({
-                        x: textPixels[mod_i].x,
-                        y: textPixels[mod_i].y,
-                        color: [
-                            pixels[i].color[0],
-                            pixels[i].color[1],
-                            pixels[i].color[2]
-                        ]
-                    });
-                }
+                    const textPixels = img2px();
 
-                for (let i = 0; i < scatteredPixels.length && i < pixels.length; i++) {
-                    ctx.fillStyle = `rgb(${scatteredPixels[i].color.join(',')})`;
-                    ctx.fillRect(scatteredPixels[i].x, scatteredPixels[i].y, 1, 1);
-                }
-
-                function reconstructText() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+                    let scatteredPixels = [];
+
+                    for (let i = 0; i < pixels.length; i++) {
+                        mod_i = i % textPixels.length;
+                        scatteredPixels.push({
+                            x: textPixels[mod_i].x,
+                            y: textPixels[mod_i].y,
+                            color: [
+                                pixels[i].color[0],
+                                pixels[i].color[1],
+                                pixels[i].color[2]
+                            ]
+                        });
+                    }
+
                     for (let i = 0; i < scatteredPixels.length && i < pixels.length; i++) {
-                        scatteredPixels[i].x += (pixels[i].x - scatteredPixels[i].x) * 0.05;
-                        scatteredPixels[i].y += (pixels[i].y - scatteredPixels[i].y) * 0.05;
                         ctx.fillStyle = `rgb(${scatteredPixels[i].color.join(',')})`;
                         ctx.fillRect(scatteredPixels[i].x, scatteredPixels[i].y, 1, 1);
                     }
 
-                    requestAnimationFrame(reconstructText);
-                }
+                    function reconstructText() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                const startButton = document.getElementById('startButton');
-                startButton.addEventListener('click', () => {
-                    startButton.classList.add('hidden');
-                    requestAnimationFrame(reconstructText);
-                });
+                        for (let i = 0; i < scatteredPixels.length && i < pixels.length; i++) {
+                            scatteredPixels[i].x += (pixels[i].x - scatteredPixels[i].x) * 0.05;
+                            scatteredPixels[i].y += (pixels[i].y - scatteredPixels[i].y) * 0.05;
+                            ctx.fillStyle = `rgb(${scatteredPixels[i].color.join(',')})`;
+                            ctx.fillRect(scatteredPixels[i].x, scatteredPixels[i].y, 1, 1);
+                        }
+
+                        requestAnimationFrame(reconstructText);
+                    }
+
+                    const startButton = document.getElementById('startButton');
+                    startButton.addEventListener('click', () => {
+                        startButton.classList.add('hidden');
+                        requestAnimationFrame(reconstructText);
+                    });
+                };
             };
-        };
+        }
+        
 
         // 页面切换逻辑
         function showPage(pageId, backgroundCanvasId) {
