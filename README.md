@@ -1,7 +1,7 @@
 # happy_new_year_puzzle
 A puzzle game to send New Year's greetings
 
-Type in `https://bflyer.github.io/happy_new_year_puzzle/puzzle.html` in your browser to play the game.
+Type in `https://bflyer.github.io/happy_new_year_puzzle/happy_new_year_puzzle.html` in your browser to play the game.
 
 **How to play?**
 - **直接开始**：If you choose this button, you will be redirected to the game page directly, and get my surprise after finishing the puzzle and the new button is pressed.  
