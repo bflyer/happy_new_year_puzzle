@@ -246,30 +246,60 @@
             return pieces;
         }
 
+        // async function createPuzzlePieces() {
+        //     const img = await loadImage();
+        //     const imgs = await splitImageIntoPieces(img);
+
+        //     console.log("Successfully loaded image and split it into pieces");
+
+        //     for (let row = 0; row < 4; row++) {
+        //         for (let col = 0; col < 4; col++) {
+        //             const piece = document.createElement('div');
+        //             piece.classList.add('puzzle-piece');
+
+        //             const img = new Image();
+        //             img.src = imgs[row * 4 + col].src;
+        //             piece.appendChild(img);
+
+        //             piece.onclick = () => rotatePiece(piece);
+
+        //             const randomRotation = Math.floor(Math.random() * 4) * 90;
+        //             const piece_img = piece.querySelector('img');
+        //             piece_img.style.transform = `rotate(${randomRotation}deg)`;
+        //             pieces.push({ element: piece, originalIndex: row * 4 + col, currentRotation: randomRotation});
+
+        //             puzzleContainer.appendChild(piece);
+        //         }
+        //     }
+        // }
         async function createPuzzlePieces() {
-            const img = await loadImage();
-            const imgs = await splitImageIntoPieces(img);
+            try {
+                const img = await loadImage();
+                const imgs = await splitImageIntoPieces(img);
+                console.log("Successfully loaded image and split it into pieces");
 
-            console.log("Successfully loaded image and split it into pieces");
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 4; col++) {
+                        const piece = document.createElement('div');
+                        piece.classList.add('puzzle-piece');
 
-            for (let row = 0; row < 4; row++) {
-                for (let col = 0; col < 4; col++) {
-                    const piece = document.createElement('div');
-                    piece.classList.add('puzzle-piece');
+                        const img = new Image();
+                        img.src = imgs[row * 4 + col].src;
+                        piece.appendChild(img);
 
-                    const img = new Image();
-                    img.src = imgs[row * 4 + col].src;
-                    piece.appendChild(img);
+                        piece.onclick = () => rotatePiece(piece);
 
-                    piece.onclick = () => rotatePiece(piece);
+                        const randomRotation = Math.floor(Math.random() * 4) * 90;
+                        const piece_img = piece.querySelector('img');
+                        piece_img.style.transform = `rotate(${randomRotation}deg)`;
+                        pieces.push({ element: piece, originalIndex: row * 4 + col, currentRotation: randomRotation});
 
-                    const randomRotation = Math.floor(Math.random() * 4) * 90;
-                    const piece_img = piece.querySelector('img');
-                    piece_img.style.transform = `rotate(${randomRotation}deg)`;
-                    pieces.push({ element: piece, originalIndex: row * 4 + col, currentRotation: randomRotation});
-
-                    puzzleContainer.appendChild(piece);
+                        puzzleContainer.appendChild(piece);
+                        console.log("Piece added to puzzleContainer:", piece);
+                    }
                 }
+            } catch (error) {
+                console.error("Failed to load or split image:", error);
             }
         }
 
