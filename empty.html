@@ -164,6 +164,7 @@
         let userImage = null;
 
         function drawBorder(canvasId) {
+            console.log('drawBorder', canvasId);
             const backgroundCanvas = document.getElementById(canvasId);
             const bgCtx = backgroundCanvas.getContext('2d');
             const borderImage = new Image();
@@ -281,7 +282,7 @@
                 if (surpriseButton.classList.contains('hidden')) {
                     surpriseButton.classList.remove('hidden');
                     surpriseButton.addEventListener('click', () => {
-                        showPage('animationPage');
+                        showPage('animationPage', 'animationBackgroundCanvas');
                         surpriseButton.classList.add('hidden');
                     });
                 }
@@ -378,12 +379,12 @@
         };
 
         // 页面切换逻辑
-        function showPage(pageId) {
+        function showPage(pageId, backgroundCanvasId) {
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
             document.getElementById(pageId).classList.add('active');
-            drawBorder('animationBackgroundCanvas');
+            drawBorder(backgroundCanvasId);
         }
 
         // 初始化按钮逻辑
@@ -405,7 +406,7 @@
                             canvas.height = 400;
                             ctx.drawImage(img, 0, 0, 400, 400);
                             userImage = canvas.toDataURL();
-                            showPage('puzzlePage');
+                            showPage('puzzlePage', 'puzzleBackgroundCanvas');
                             createPuzzlePieces();
                         };
                     };
@@ -416,7 +417,7 @@
         });
 
         document.getElementById('startDirectlyButton').addEventListener('click', () => {
-            showPage('puzzlePage');
+            showPage('puzzlePage', 'puzzleBackgroundCanvas');
             createPuzzlePieces();
         });
     </script>
