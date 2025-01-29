@@ -320,6 +320,8 @@
             const img = new Image();
             if (userImage)
                 console.log("I have a user image");
+            else 
+                console.log("I don't have a user image");
             img.src = userImage ? userImage : 'photo.png';
 
             img.onload = () => {
@@ -330,6 +332,7 @@
                 const pixels = img2px();
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                console.log("clear photo.");
 
                 const textImg = new Image();
                 textImg.src = 'wish.png';
@@ -341,6 +344,7 @@
                     const textPixels = img2px();
 
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    console.log("clear text.");
 
                     let scatteredPixels = [];
 
@@ -361,6 +365,7 @@
                         ctx.fillStyle = `rgb(${scatteredPixels[i].color.join(',')})`;
                         ctx.fillRect(scatteredPixels[i].x, scatteredPixels[i].y, 1, 1);
                     }
+                    console.log("draw colored text.");
 
                     function reconstructText() {
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -377,6 +382,7 @@
 
                     const startButton = document.getElementById('startButton');
                     startButton.addEventListener('click', () => {
+                        console.log("click2");
                         startButton.classList.add('hidden');
                         requestAnimationFrame(reconstructText);
                     });
