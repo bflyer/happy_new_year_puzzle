@@ -172,7 +172,9 @@
             borderImage.onload = () => {
                 backgroundCanvas.width = backgroundCanvas.offsetWidth;
                 backgroundCanvas.height = backgroundCanvas.offsetHeight;
+                console.log('Start draw border on canvas', canvasId);
                 bgCtx.drawImage(borderImage, 0, 0, backgroundCanvas.width, backgroundCanvas.height);
+                console.log('Successfully draw border on canvas', canvasId);
             };
         }
 
