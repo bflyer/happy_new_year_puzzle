@@ -163,7 +163,7 @@
     <script>
         let userImage = null;
 
-        function drawBorder(canvasId) {
+        async function drawBorder(canvasId) {
             console.log('drawBorder', canvasId);
             const backgroundCanvas = document.getElementById(canvasId);
             const bgCtx = backgroundCanvas.getContext('2d');
@@ -284,7 +284,7 @@
                 if (surpriseButton.classList.contains('hidden')) {
                     surpriseButton.classList.remove('hidden');
                     surpriseButton.addEventListener('click', () => {
-                        showPage('animationPage', 'animationBackgroundCanvas');
+                        showPage('animationPage');
                         console.log("Successfully show animation page");
                         // createAnimation();
                         surpriseButton.classList.add('hidden');
@@ -317,6 +317,7 @@
 
         // 动画页面逻辑
         async function createAnimation() {
+            drawBorder('animationBackgroundCanvas');
             const img = new Image();
             if (userImage)
                 console.log("I have a user image");
@@ -420,7 +421,7 @@
                             canvas.height = 400;
                             ctx.drawImage(img, 0, 0, 400, 400);
                             userImage = canvas.toDataURL();
-                            showPage('puzzlePage', 'puzzleBackgroundCanvas');
+                            showPage('puzzlePage');
                             createPuzzlePieces();
                             createAnimation();
                         };
@@ -432,7 +433,7 @@
         });
 
         document.getElementById('startDirectlyButton').addEventListener('click', () => {
-            showPage('puzzlePage', 'puzzleBackgroundCanvas');
+            showPage('puzzlePage');
             createPuzzlePieces();
             createAnimation();
         });
