@@ -316,7 +316,7 @@
         }
 
         // 动画页面逻辑
-        function createAnimation() {
+        async function createAnimation() {
             const img = new Image();
             if (userImage)
                 console.log("I have a user image");
@@ -392,12 +392,13 @@
         
 
         // 页面切换逻辑
-        function showPage(pageId, backgroundCanvasId) {
+        function showPage(pageId, backgroundCanvasId=null) {
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
             document.getElementById(pageId).classList.add('active');
-            drawBorder(backgroundCanvasId);
+            if (backgroundCanvasId)
+                drawBorder(backgroundCanvasId);
         }
 
         // 初始化按钮逻辑
@@ -419,8 +420,9 @@
                             canvas.height = 400;
                             ctx.drawImage(img, 0, 0, 400, 400);
                             userImage = canvas.toDataURL();
-                            showPage('puzzlePage', 'puzzleBackgroundCanvas');
+                            showPage('puzzlePage');
                             createPuzzlePieces();
+                            createAnimation();
                         };
                     };
                     reader.readAsDataURL(file);
@@ -430,8 +432,9 @@
         });
 
         document.getElementById('startDirectlyButton').addEventListener('click', () => {
-            showPage('puzzlePage', 'puzzleBackgroundCanvas');
+            showPage('puzzlePage');
             createPuzzlePieces();
+            createAnimation();
         });
     </script>
 </body>
