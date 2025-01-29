@@ -176,6 +176,7 @@
         }
 
         // 拼图页面逻辑
+        drawBorder('puzzleBackgroundCanvas');
         const puzzleContainer = document.querySelector('.puzzle-container');
         let pieces = [];
         let draggedPiece = null;
@@ -311,6 +312,8 @@
         }
 
         const img = new Image();
+        if (userImage)
+            console.log("I have a user image");
         img.src = userImage ? userImage : 'photo.png';
 
         img.onload = () => {
