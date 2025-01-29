@@ -246,6 +246,8 @@
             const img = await loadImage();
             const imgs = await splitImageIntoPieces(img);
 
+            console.log("Successfully loaded image and split it into pieces");
+
             for (let row = 0; row < 4; row++) {
                 for (let col = 0; col < 4; col++) {
                     const piece = document.createElement('div');
@@ -283,6 +285,7 @@
                     surpriseButton.classList.remove('hidden');
                     surpriseButton.addEventListener('click', () => {
                         showPage('animationPage', 'animationBackgroundCanvas');
+                        console.log("Successfully show animation page");
                         createAnimation();
                         surpriseButton.classList.add('hidden');
                     });
@@ -290,29 +293,29 @@
             }
         }
 
+        function img2px() {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = [];
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                if (imageData.data[i + 3] != 0) {
+                    pixels.push({
+                        x: (i / 4) % canvas.width,
+                        y: Math.floor((i / 4) / canvas.width),
+                        color: [
+                            imageData.data[i],
+                            imageData.data[i + 1],
+                            imageData.data[i + 2]
+                        ]
+                    });
+                }
+            }
+            return pixels;
+        }
+
         // 动画页面逻辑
         function createAnimation() {
             const canvas = document.querySelector('.foreground-canvas');
             const ctx = canvas.getContext('2d');
-
-            function img2px() {
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const pixels = [];
-                for (let i = 0; i < imageData.data.length; i += 4) {
-                    if (imageData.data[i + 3] != 0) {
-                        pixels.push({
-                            x: (i / 4) % canvas.width,
-                            y: Math.floor((i / 4) / canvas.width),
-                            color: [
-                                imageData.data[i],
-                                imageData.data[i + 1],
-                                imageData.data[i + 2]
-                            ]
-                        });
-                    }
-                }
-                return pixels;
-            }
 
             const img = new Image();
             if (userImage)
