@@ -206,7 +206,6 @@
         }
 
         function splitImageIntoPieces(img, piecesCount = 16) {
-            const puzzleContainer = document.querySelector('.puzzle-container');
             const containerWidth = puzzleContainer.clientWidth;
             const containerHeight = puzzleContainer.clientHeight;
 
@@ -246,62 +245,33 @@
             return pieces;
         }
 
-        // async function createPuzzlePieces() {
-        //     const img = await loadImage();
-        //     const imgs = await splitImageIntoPieces(img);
-
-        //     console.log("Successfully loaded image and split it into pieces");
-
-        //     for (let row = 0; row < 4; row++) {
-        //         for (let col = 0; col < 4; col++) {
-        //             const piece = document.createElement('div');
-        //             piece.classList.add('puzzle-piece');
-
-        //             const img = new Image();
-        //             img.src = imgs[row * 4 + col].src;
-        //             piece.appendChild(img);
-
-        //             piece.onclick = () => rotatePiece(piece);
-
-        //             const randomRotation = Math.floor(Math.random() * 4) * 90;
-        //             const piece_img = piece.querySelector('img');
-        //             piece_img.style.transform = `rotate(${randomRotation}deg)`;
-        //             pieces.push({ element: piece, originalIndex: row * 4 + col, currentRotation: randomRotation});
-
-        //             puzzleContainer.appendChild(piece);
-        //         }
-        //     }
-        // }
         async function createPuzzlePieces() {
-            try {
-                const img = await loadImage();
-                const imgs = await splitImageIntoPieces(img);
-                console.log("Successfully loaded image and split it into pieces");
+            const img = await loadImage();
+            const imgs = await splitImageIntoPieces(img);
 
-                for (let row = 0; row < 4; row++) {
-                    for (let col = 0; col < 4; col++) {
-                        const piece = document.createElement('div');
-                        piece.classList.add('puzzle-piece');
+            console.log("Successfully loaded image and split it into pieces");
 
-                        const img = new Image();
-                        img.src = imgs[row * 4 + col].src;
-                        piece.appendChild(img);
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    const piece = document.createElement('div');
+                    piece.classList.add('puzzle-piece');
 
-                        piece.onclick = () => rotatePiece(piece);
+                    const img = new Image();
+                    img.src = imgs[row * 4 + col].src;
+                    piece.appendChild(img);
 
-                        const randomRotation = Math.floor(Math.random() * 4) * 90;
-                        const piece_img = piece.querySelector('img');
-                        piece_img.style.transform = `rotate(${randomRotation}deg)`;
-                        pieces.push({ element: piece, originalIndex: row * 4 + col, currentRotation: randomRotation});
+                    piece.onclick = () => rotatePiece(piece);
 
-                        puzzleContainer.appendChild(piece);
-                        console.log("Piece added to puzzleContainer:", piece);
-                    }
+                    const randomRotation = Math.floor(Math.random() * 4) * 90;
+                    const piece_img = piece.querySelector('img');
+                    piece_img.style.transform = `rotate(${randomRotation}deg)`;
+                    pieces.push({ element: piece, originalIndex: row * 4 + col, currentRotation: randomRotation});
+
+                    puzzleContainer.appendChild(piece);
                 }
-            } catch (error) {
-                console.error("Failed to load or split image:", error);
             }
         }
+
 
         function rotatePiece(piece) {
             const pieceData = pieces.find(p => p.element === piece);
