@@ -293,7 +293,7 @@
             }
         }
 
-        function img2px() {
+        function img2px(ctx) {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const pixels = [];
             for (let i = 0; i < imageData.data.length; i += 4) {
@@ -341,7 +341,7 @@
                     canvas.height = textImg.height;
                     ctx.drawImage(textImg, 0, 0);
 
-                    const textPixels = img2px();
+                    const textPixels = img2px(ctx);
 
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     console.log("clear text.");
