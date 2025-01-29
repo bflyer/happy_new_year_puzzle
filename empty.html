@@ -293,7 +293,10 @@
             }
         }
 
-        function img2px(ctx) {
+        const canvas = document.querySelector('.foreground-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function img2px() {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const pixels = [];
             for (let i = 0; i < imageData.data.length; i += 4) {
@@ -314,9 +317,6 @@
 
         // 动画页面逻辑
         function createAnimation() {
-            const canvas = document.querySelector('.foreground-canvas');
-            const ctx = canvas.getContext('2d');
-
             const img = new Image();
             if (userImage)
                 console.log("I have a user image");
